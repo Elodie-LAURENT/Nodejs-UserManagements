@@ -130,15 +130,20 @@ exports.delete = (req, res) => {
 
 // View Users
 exports.viewall = (req, res) => {
-
-  // User the connection
-  connection.query('SELECT * FROM user WHERE id = ?', [req.params.id], (err, rows) => {
-    if (!err) {
-      res.render('view-user', { rows });
-    } else {
+  // Select the database before running the query
+  connection.query('USE ' + process.env.DB_NAME, (err) => {
+    if (err) {
       console.log(err);
+    } else {
+      // User the connection
+      connection.query('SELECT * FROM user WHERE id = ?', [req.params.id], (err, rows) => {
+        if (!err) {
+          res.render('view-user', { rows });
+        } else {
+          console.log(err);
+        }
+        console.log('The data from user table: \n', rows);
+      });
     }
-    console.log('The data from user table: \n', rows);
   });
-
 }
